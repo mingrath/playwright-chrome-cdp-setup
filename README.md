@@ -44,11 +44,10 @@ In Claude Code settings (`~/.claude/settings.json`), make sure you have the Play
 Each Google account gets its own Chrome profile folder:
 
 ```bash
-# Create the base directory
-mkdir -p ~/.chrome-playwright/personal
-mkdir -p ~/.chrome-playwright/work
+mkdir -p ~/.chrome-playwright-profiles/mingrath
+mkdir -p ~/.chrome-playwright-profiles/chanika
 # Add more as needed:
-# mkdir -p ~/.chrome-playwright/clinic
+# mkdir -p ~/.chrome-playwright-profiles/another-account
 ```
 
 ### Step 3: Log In to Each Profile (One-Time)
@@ -56,22 +55,22 @@ mkdir -p ~/.chrome-playwright/work
 Launch Chrome with each profile and log into the Google account:
 
 ```bash
-# Personal account
+# Mingrath account
 /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \
   --remote-debugging-port=9222 \
-  --user-data-dir="$HOME/.chrome-playwright/personal" \
+  --user-data-dir="$HOME/.chrome-playwright-profiles/mingrath" \
   --no-first-run --no-default-browser-check
 ```
 
-1. Log into your Google account in the Chrome window
+1. Log into the Google account in the Chrome window
 2. Close Chrome
 3. Repeat for other profiles:
 
 ```bash
-# Work account
+# Chanika account
 /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \
   --remote-debugging-port=9222 \
-  --user-data-dir="$HOME/.chrome-playwright/work" \
+  --user-data-dir="$HOME/.chrome-playwright-profiles/chanika" \
   --no-first-run --no-default-browser-check
 ```
 
@@ -84,7 +83,7 @@ Replace the Chrome path:
 ```bash
 google-chrome \
   --remote-debugging-port=9222 \
-  --user-data-dir="$HOME/.chrome-playwright/personal" \
+  --user-data-dir="$HOME/.chrome-playwright-profiles/mingrath" \
   --no-first-run --no-default-browser-check
 ```
 
@@ -93,7 +92,7 @@ google-chrome \
 ```powershell
 "C:\Program Files\Google\Chrome\Application\chrome.exe" `
   --remote-debugging-port=9222 `
-  --user-data-dir="%USERPROFILE%\.chrome-playwright\personal" `
+  --user-data-dir="%USERPROFILE%\.chrome-playwright-profiles\mingrath" `
   --no-first-run --no-default-browser-check
 ```
 
@@ -101,13 +100,13 @@ google-chrome \
 
 Once set up, just tell Claude:
 
-- **"Open Chrome with my personal account"** — launches personal profile
-- **"Open Chrome with my work account"** — launches work profile
+- **"Open Chrome with mingrath"** — launches Mingrath's profile
+- **"Open Chrome with chanika"** — launches Chanika's profile
 - **"Go to gmail.com"** — navigates in the open browser
 - **"Click on the first email"** — interacts with the page
 
 Claude will:
-1. Kill any existing debug Chrome
+1. Kill any existing debug Chrome (`pkill -f chrome-playwright-profiles`)
 2. Launch Chrome with the requested profile on port 9222
 3. Connect via Playwright MCP over CDP
 4. Control the browser as instructed
@@ -118,12 +117,12 @@ Add this to your Claude memory (`~/.claude/MEMORY.md` or project memory) so Clau
 
 ```markdown
 ## Chrome Profiles for Playwright MCP (CDP)
-- "open Chrome personal" → launch with ~/.chrome-playwright/personal on port 9222
-- "open Chrome work" → launch with ~/.chrome-playwright/work on port 9222
+- **mingrath** = Mingrath's Google account
+- **chanika** = Chanika's Google account
+- Profiles stored in `~/.chrome-playwright-profiles/<name>/`
+- Launch: `/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --remote-debugging-port=9222 --user-data-dir="$HOME/.chrome-playwright-profiles/<name>" --no-first-run --no-default-browser-check`
 - Always kill existing debug Chrome before launching a new profile
 - Only one profile at a time on port 9222
-- Chrome path (macOS): /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome
-- Launch flags: --remote-debugging-port=9222 --user-data-dir=<profile-path> --no-first-run --no-default-browser-check
 ```
 
 ## Troubleshooting
@@ -145,10 +144,9 @@ Make sure you're using the same `--user-data-dir` path every time. The login is 
 ## File Structure
 
 ```
-~/.chrome-playwright/
-├── personal/     # Personal Google account profile
-├── work/         # Work Google account profile
-└── clinic/       # (example) Another account profile
+~/.chrome-playwright-profiles/
+├── mingrath/     # Mingrath's Google account profile
+└── chanika/      # Chanika's Google account profile
 ```
 
 Each folder contains Chrome's user data (cookies, local storage, saved logins). **Do not delete these folders** or you'll need to log in again.
